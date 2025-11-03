@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import pymysql
 import os
@@ -275,9 +275,9 @@ def delete_todo(todo_id):
             'error': str(e)
         }), 500
 
-@app.route('/', methods=['GET'])
-def root():
-    """Root endpoint with API information"""
+@app.route('/apis', methods=['GET'])
+def apis():
+    """API endpoint with API information"""
     return jsonify({
         'name': 'Todo List API',
         'version': '1.0.0',
@@ -290,6 +290,11 @@ def root():
             'delete_todo': 'DELETE /api/todos/<id>'
         }
     }), 200
+
+@app.route('/', methods=['GET'])
+def root():
+    api_base_url = os.environ.get('API_BASE_URL', 'http://localhost:5000')
+    return render_template('index.html', api_url=api_base_url)
 
 if __name__ == '__main__':
     # Initialize database on startup
